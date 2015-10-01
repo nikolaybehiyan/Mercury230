@@ -1,11 +1,85 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
-  </body>
-</html>
+<%- layout('layout') %>
+
+<div class="wrapper" ng-controller="indexCtrl">
+
+    <div class="container">
+        <p><%= title %></p>
+        <div class="row">
+            <div class="col-lg-6">
+                <div ui-tree>
+                    <ol ui-tree-nodes ng-model="data" data-nodrop-enabled="">
+                        <li ng-repeat="item in data" ui-tree-node>
+
+                            <div ui-tree-handle>
+
+                                <a class="btn btn-success btn-xs ng-scope" ng-if="item.nodes && item.nodes.length > 0" data-nodrag="" ng-click="toggle(this)"><span class="glyphicon glyphicon-chevron-down" ng-class="{
+                                  'glyphicon-chevron-right': collapsed,
+                                  'glyphicon-chevron-down': !collapsed
+                                }"></span></a>
+
+                                {{item.title}}
+                                <a class="pull-right btn btn-primary btn-xs" data-nodrag="" ng-click="newSubItem(this)" style="margin-right: 8px;"><span class="glyphicon glyphicon-plus"></span></a>
+                            </div>
+
+                            <ol ui-tree-nodes ng-model="item.nodes" class="ng-scope" ng-if="collapsed != true"  data-nodrop-enabled="">
+                                <li ng-repeat="node in item.nodes" ui-tree-node>
+                                    <div ui-tree-handle style="min-height:50px;">
+                                        {{node.title}}
+                                        <a class="pull-right btn btn-danger btn-xs"  data-nodrag="" ng-click="delete(this)"><span class="glyphicon glyphicon-remove"></span></a>
+                                        <a href="" ng-show="!node.editing" class="btn btn-primary btn-xs pull-right" data-nodrag ng-click="edit(node)"><i class="glyphicon glyphicon-pencil"></i></a>
+                                    </div>
+                                    <div class=" angular-ui-tree-handle" data-nodrag ng-show="node.editing">
+                                        <form  role="form" name="inputForm">
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-inline">
+                                                            <label class="sr-only" for="groupName" style="margin-bottom: 10px;">Group name</label>
+                                                            <input type="text" name="name" class="form-control" placeholder="Имя счетчика" ng-model="node.title" style="margin-bottom: 10px;" required>
+
+                                                            <span class="glyphicon glyphicon-ok" ng-show="inputForm.name.$valid" style="color: green"></span>
+                                                        </div>
+                                                        <div class="form-inline">
+                                                            <input type="number" min="1" max="127" name="address" class="form-control" placeholder="Адрес счетчика" ng-model="node.address" style="margin-bottom: 10px;width:170px" required>
+                                                            <span class="glyphicon glyphicon-ok" ng-show="inputForm.address.$valid" style="color: green"></span>
+                                                        </div>
+                                                        <div class="form-inline">
+                                                            <select id="port" name="port" placeholder="Выберите Порт..." class="form-control" ng-model="node.port" ng-options="port for port in portList " style="margin-bottom: 10px;" required>
+                                                                <option value="" disabled selected>Выберите Порт...</option>
+                                                            </select>
+                                                            <span class="glyphicon glyphicon-ok" style="color: green" ng-show="inputForm.port.$dirty"></span>
+                                                        </div>
+
+                                                        <div class="submitButtons" style="margin-top: 50px;">
+                                                            <button type="submit" class="btn btn-success ng-scope" ng-click="test(node)"  ng-if="inputForm.port.$dirty && inputForm.$valid  ">Test</button>
+                                                            <button type="submit" class="btn btn-info ng-scope" ng-click="save(node)" ng-if="inputForm.port.$dirty && inputForm.$valid && node.selectedParams.length > 0">Save</button>
+                                                            <button type="submit" class="btn btn-warning" ng-click="exit(node)">Cancel</button>
+                                                        </div>
+
+
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                            <select multiple="multiple" id="selectValues" name="selectValues[]" class="form-control" ng-model="node.selectedParams" ng-options="  param for param in allParams " ng-click="cons(this)" style="margin-bottom: 10px;min-height:500px;" required>
+                                                            </select>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+
+                                                </div>
+                                            </div>
+
+                                        </form>
+                                    </div>
+                                </li>
+                            </ol>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+

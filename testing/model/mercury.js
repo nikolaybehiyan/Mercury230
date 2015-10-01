@@ -2,7 +2,7 @@ var serialport = require('serialport');
 var SerialPort = serialport.SerialPort;
 var async = require('async');
 var crc = require('crc');
-
+var data = require('./data/data').getData;
 function Mercury(){
     var self = this;
     self.connectionParams = undefined;
@@ -123,22 +123,7 @@ function Mercury(){
         //TODO identification number
 
     }
-    self.readRequestArray = [
-        [ 'totEnergyFromLastReset', self.totEnergyFromLastReset],
-        [ 'totalEnergyPrevDay', self.totalEnergyPrevDay],
-        ['totalEnergyToday', self.totalEnergyToday],
-        ['currentPerPhase', self.currentPerPhase],
-        ['powerCoefficientPerPhase', self.powerCoefficientPerPhase],
-        ['frequency', self.frequency],
-        ['angleBetweenPhases', self.angleBetweenPhases],
-        ['powerPerPhaseP', self.powerPerPhaseP],
-        ['powerS', self.powerS],
-        ['voltageU', self.voltageU],
-        ['totalEnergyPrevYear',self.totalEnergyPrevYear],
-        ['totalEnergyCurrentYear',self.totalEnergyCurrentYear],
-        ['totalEnergyCurrentMonth',self.totalEnergyCurrentMonth],
-        ['totalEnergyPrevMonth',self.totalEnergyPrevMonth]
-    ]
+    self.readRequestArray = data;
 }
 
 Mercury.prototype.initiateConnection = function(connParams, callback){
@@ -167,11 +152,15 @@ Mercury.prototype.connectNow = function(connParams){
 
     console.log('initiating a new connection');
     console.log('Attempting to connect to port...',0,self.connectionParams);
-
-    self.client.open(function(err){
-       if(err) self.connectError(err);
-       self.onConnected();
-    });
+    if(self.client.isOpen()){
+        console.log('PORT IS ALREADY USED BY ANOTHER PROGRAM');
+        self.connectionReset();
+    }else{
+        self.client.open(function(err){
+            if(err) self.connectError(err);
+            self.onConnected();
+        });
+    }
 };
 
 
@@ -184,7 +173,8 @@ Mercury.prototype.onConnected = function(){
 
     self.client.write(self.connectRequest.slice(0,11), function(err, result){   //LOGIN
         //TODO what do we need to do with err and result
-        console.log(err,result + 'AAAAAAA');
+        //TODO log errors into file
+        console.log(err,result + 'AAAAAAA'); // result returns written buffer size
     });
 
     //listen for reply

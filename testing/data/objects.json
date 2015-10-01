@@ -1,0 +1,1 @@
+[{"id":1,"title":"node1","nodes":[{"id":11,"title":"node1.2","nodes":[],"editing":false,"address":1,"port":"COM2","selectedParams":["totEnergyFromLastResetAplus"]},{"id":12,"title":"node1.3","nodes":[],"editing":false,"address":1,"port":"COM2","selectedParams":["totEnergyFromLastResetRplus"]}]}]
